@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Instance request handler.
- *
+ * 客户端服务注册InstanceRequest 处理类
  * @author xiweng.yy
  */
 @Component
@@ -49,12 +49,15 @@ public class InstanceRequestHandler extends RequestHandler<InstanceRequest, Inst
     @Override
     @Secured(action = ActionTypes.WRITE)
     public InstanceResponse handle(InstanceRequest request, RequestMeta meta) throws NacosException {
+        // 组装Service
         Service service = Service
                 .newService(request.getNamespace(), request.getGroupName(), request.getServiceName(), true);
         switch (request.getType()) {
             case NamingRemoteConstants.REGISTER_INSTANCE:
+                // 服务注册
                 return registerInstance(service, request, meta);
             case NamingRemoteConstants.DE_REGISTER_INSTANCE:
+                // 服务注销
                 return deregisterInstance(service, request, meta);
             default:
                 throw new NacosException(NacosException.INVALID_PARAM,

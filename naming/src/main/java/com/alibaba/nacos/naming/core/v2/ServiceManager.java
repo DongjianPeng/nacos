@@ -64,6 +64,7 @@ public class ServiceManager {
             return service;
         });
         Service result = singletonRepository.get(service);
+        // 注册表
         namespaceSingletonMaps.computeIfAbsent(result.getNamespace(), namespace -> new ConcurrentHashSet<>());
         namespaceSingletonMaps.get(result.getNamespace()).add(result);
         return result;
