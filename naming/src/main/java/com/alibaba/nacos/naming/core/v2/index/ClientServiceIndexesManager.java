@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class ClientServiceIndexesManager extends SmartSubscriber {
     
+    // 注册表 <Service, Set<clientId>>，instance放在Client中
     private final ConcurrentMap<Service, Set<String>> publisherIndexes = new ConcurrentHashMap<>();
     
     private final ConcurrentMap<Service, Set<String>> subscriberIndexes = new ConcurrentHashMap<>();
@@ -117,6 +118,7 @@ public class ClientServiceIndexesManager extends SmartSubscriber {
     private void handleClientOperation(ClientOperationEvent event) {
         Service service = event.getService();
         String clientId = event.getClientId();
+        // 客户端注册服务事件处理
         if (event instanceof ClientOperationEvent.ClientRegisterServiceEvent) {
             addPublisherIndexes(service, clientId);
         } else if (event instanceof ClientOperationEvent.ClientDeregisterServiceEvent) {
@@ -129,9 +131,11 @@ public class ClientServiceIndexesManager extends SmartSubscriber {
     }
     
     private void addPublisherIndexes(Service service, String clientId) {
+        // 初始化一下
         publisherIndexes.computeIfAbsent(service, key -> new ConcurrentHashSet<>());
+        // 到这里就已经算注册完成了
         publisherIndexes.get(service).add(clientId);
-        // 服务变更事件
+        // 发布服务变更事件
         NotifyCenter.publishEvent(new ServiceEvent.ServiceChangedEvent(service, true));
     }
     

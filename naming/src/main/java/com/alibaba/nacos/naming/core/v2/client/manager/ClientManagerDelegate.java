@@ -75,6 +75,8 @@ public class ClientManagerDelegate implements ClientManager {
     
     @Override
     public Client getClient(String clientId) {
+        // PersistentIpPortClientManager
+        // EphemeralIpPortClientManager
         return getClientManagerById(clientId).getClient(clientId);
     }
     

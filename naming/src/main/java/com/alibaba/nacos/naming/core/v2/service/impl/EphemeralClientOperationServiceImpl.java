@@ -56,22 +56,30 @@ public class EphemeralClientOperationServiceImpl implements ClientOperationServi
     public void registerInstance(Service service, Instance instance, String clientId) throws NacosException {
         NamingUtils.checkInstanceIsLegal(instance);
     
+        //获取注册表里的Service，如果没有就初始化一个
         Service singleton = ServiceManager.getInstance().getSingleton(service);
         if (!singleton.isEphemeral()) {
+            // 这里可以得出2.x版本之后，同一个服务不可以既存在临时实例，又存在持久化实例
             throw new NacosRuntimeException(NacosException.INVALID_PARAM,
                     String.format("Current service %s is persistent service, can't register ephemeral instance.",
                             singleton.getGroupedServiceName()));
         }
+        // ClientManagerDelegate -> EphemeralIpPortClientManager
+        // gRPC是通过Netty长连接，所以服务端可以保存连接
         Client client = clientManager.getClient(clientId);
         if (!clientIsLegal(client, clientId)) {
             return;
         }
         InstancePublishInfo instanceInfo = getPublishInfo(instance);
+        // Client -> IpPortBasedClient
+        // 将服务和实例放在客户端对象的属性中，发布ClientChangedEvent 客户端改变事件
         client.addServiceInstance(singleton, instanceInfo);
+        // 更新一下客户端最后访问时间
         client.setLastUpdatedTime();
         client.recalculateRevision();
-        // ClientRegisterServiceEvent 客户端注册服务
+        // ClientRegisterServiceEvent 发布客户端注册服务事件
         NotifyCenter.publishEvent(new ClientOperationEvent.ClientRegisterServiceEvent(singleton, clientId));
+        // InstanceMetadataEvent 发布实例元数据变化事件
         NotifyCenter
                 .publishEvent(new MetadataEvent.InstanceMetadataEvent(singleton, instanceInfo.getMetadataId(), false));
     }

@@ -64,6 +64,7 @@ public class NamingUtils {
             throw new IllegalArgumentException("Param 'groupName' is illegal, groupName is blank");
         }
         final String resultGroupedName = groupName + Constants.SERVICE_INFO_SPLITER + serviceName;
+        // 使用intern节省内存
         return resultGroupedName.intern();
     }
     

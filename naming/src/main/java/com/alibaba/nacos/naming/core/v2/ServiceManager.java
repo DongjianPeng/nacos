@@ -37,11 +37,12 @@ public class ServiceManager {
     
     private final ConcurrentHashMap<Service, Service> singletonRepository;
     
+    // ConcurrentHashMap<Namespace, Set<Service>>
     private final ConcurrentHashMap<String, Set<Service>> namespaceSingletonMaps;
     
     private ServiceManager() {
-        singletonRepository = new ConcurrentHashMap<>(1 << 10);
-        namespaceSingletonMaps = new ConcurrentHashMap<>(1 << 2);
+        singletonRepository = new ConcurrentHashMap<>(1 << 10); // 1024
+        namespaceSingletonMaps = new ConcurrentHashMap<>(1 << 2);// 4
     }
     
     public static ServiceManager getInstance() {
@@ -59,6 +60,7 @@ public class ServiceManager {
      * @return if service is exist, return exist service, otherwise return new service
      */
     public Service getSingleton(Service service) {
+        // computeIfAbsent：如果不存在这个key就塞一个进去
         singletonRepository.computeIfAbsent(service, key -> {
             NotifyCenter.publishEvent(new MetadataEvent.ServiceMetadataEvent(service, false));
             return service;

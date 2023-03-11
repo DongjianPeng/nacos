@@ -36,6 +36,7 @@ public class NamingPushRequestHandler implements ServerRequestHandler {
         this.serviceInfoHolder = serviceInfoHolder;
     }
     
+    // 服务端ServerRequest回调过来之后，客户端处理方法
     @Override
     public Response requestReply(Request request) {
         if (request instanceof NotifySubscriberRequest) {

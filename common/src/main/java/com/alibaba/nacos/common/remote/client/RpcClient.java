@@ -630,6 +630,7 @@ public abstract class RpcClient implements Closeable {
         Response response;
         Throwable exceptionThrow = null;
         long start = System.currentTimeMillis();
+        // 重试机制，默认重试3次
         while (retryTimes < rpcClientConfig.retryTimes() && System.currentTimeMillis() < timeoutMills + start) {
             boolean waitReconnect = false;
             try {
@@ -681,7 +682,7 @@ public abstract class RpcClient implements Closeable {
             retryTimes++;
             
         }
-        
+        // 重试次数用完之后的异常处理
         if (rpcClientStatus.compareAndSet(RpcClientStatus.RUNNING, RpcClientStatus.UNHEALTHY)) {
             switchServerAsyncOnRequestFail();
         }

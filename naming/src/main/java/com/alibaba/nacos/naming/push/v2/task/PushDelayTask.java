@@ -32,8 +32,10 @@ public class PushDelayTask extends AbstractDelayTask {
     
     private final Service service;
     
+    // 是否要推送所有客户端
     private boolean pushToAll;
     
+    // 指定要推送的客户端
     private Set<String> targetClients;
     
     public PushDelayTask(Service service, long delay) {

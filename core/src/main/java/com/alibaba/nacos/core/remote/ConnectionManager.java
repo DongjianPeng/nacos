@@ -245,8 +245,10 @@ public class ConnectionManager {
     @PostConstruct
     public void start() {
         
+        // 初始化runtimeConnectionEjector
         initConnectionEjector();
         // Start UnHealthy Connection Expel Task.
+        // 延迟1s，间隔3s
         RpcScheduledExecutor.COMMON_SERVER_EXECUTOR.scheduleWithFixedDelay(() -> {
             runtimeConnectionEjector.doEject();
         }, 1000L, 3000L, TimeUnit.MILLISECONDS);

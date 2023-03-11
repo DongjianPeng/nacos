@@ -95,6 +95,8 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
     
     @Override
     public void registerService(String serviceName, String groupName, Instance instance) throws NacosException {
+        // 临时实例：NamingGrpcClientProxy
+        // 持久化实例：NamingHttpClientProxy
         getExecuteClientProxy(instance).registerService(serviceName, groupName, instance);
     }
     
@@ -195,6 +197,7 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
         return grpcClientProxy.serverHealthy() || httpClientProxy.serverHealthy();
     }
     
+    // 临时实例注册用gRPC，持久化实例注册还是用HTTP
     private NamingClientProxy getExecuteClientProxy(Instance instance) {
         return instance.isEphemeral() ? grpcClientProxy : httpClientProxy;
     }

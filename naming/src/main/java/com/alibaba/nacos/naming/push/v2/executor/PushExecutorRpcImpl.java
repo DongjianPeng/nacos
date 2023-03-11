@@ -51,6 +51,7 @@ public class PushExecutorRpcImpl implements PushExecutor {
             NamingPushCallback callBack) {
         ServiceInfo actualServiceInfo = getServiceInfo(data, subscriber);
         callBack.setActualServiceInfo(actualServiceInfo);
+        // rpc推送客户端 ServerRequest
         pushService.pushWithCallback(clientId, NotifySubscriberRequest.buildNotifySubscriberRequest(actualServiceInfo),
                 callBack, GlobalExecutor.getCallbackExecutor());
     }
